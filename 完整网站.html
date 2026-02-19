@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python学习平台 - 完整网站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+            padding: 40px;
+        }
+
+        header h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 2em;
+            margin: 40px 0 30px 0;
+            text-align: center;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .card h3 {
+            color: #667eea;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .card p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .card-btn {
+            display: block;
+            width: 100%;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+
+        .card-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .feature-icon {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .feature-text {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .content-section h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .content-section h3 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin: 30px 0 20px 0;
+        }
+
+        .content-section p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .content-section ul {
+            margin-bottom: 20px;
+            padding-left: 30px;
+        }
+
+        .content-section li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: #666;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+            padding: 30px;
+            opacity: 0.8;
+        }
+
+        .game-info {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .game-info h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5em;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .content-section {
+                padding: 20px;
+            }
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 主页 -->
+        <div id="home" class="tab-content active">
+            <header>
+                <h1>🐍 Python学习平台</h1>
+                <p>学习Python语法知识，体验经典游戏</p>
+            </header>
+
+            <h2 class="section-title">📚 学习资源</h2>
+            <div class="cards-container">
+                <div class="card" onclick="showTab('python-syntax')">
+                    <div class="card-icon">📖</div>
+                    <h3>Python语法知识</h3>
+                    <p>全面的Python教程，包含变量、控制流程、函数、类与对象等核心知识</p>
+                    <div class="card-btn">开始学习</div>
+                </div>
+
+                <div class="card" onclick="showTab('ai-feynman')">
+                    <div class="card-icon">🎓</div>
+                    <h3>AI费曼学习助手</h3>
+                    <p>使用费曼学习法高效学习，获得简化解释、测试问题和个性化学习建议</p>
+                    <div class="card-btn">开始学习</div>
+                </div>
+            </div>
+
+            <h2 class="section-title">🎮 经典游戏</h2>
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-icon">🐍</div>
+                    <h3>贪吃蛇</h3>
+                    <p>经典贪吃蛇游戏，使用方向键控制蛇的移动，吃食物得分，避免撞到自己</p>
+                    <div class="game-info">
+                        <h4>🎯 游戏说明</h4>
+                        <p><strong>运行方法：</strong></p>
+                        <ul>
+                            <li>打开命令行</li>
+                            <li>输入：<code>cd e:\project33</code></li>
+                            <li>输入：<code>python snake_game.py</code></li>
+                        </ul>
+                        <p><strong>游戏规则：</strong></p>
+                        <ul>
+                            <li>使用方向键控制蛇的移动</li>
+                            <li>吃食物增长身体和得分</li>
+                            <li>撞到墙壁或自己会游戏结束</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">♟️</div>
+                    <h3>中国象棋</h3>
+                    <p>中国象棋游戏，支持人机对战，包含完整的象棋规则和优美的界面</p>
+                    <div class="game-info">
+                        <h4>🎯 游戏说明</h4>
+                        <p><strong>运行方法：</strong></p>
+                        <ul>
+                            <li>打开命令行</li>
+                            <li>输入：<code>cd e:\project33</code></li>
+                            <li>输入：<code>python chinese_chess.py</code></li>
+                        </ul>
+                        <p><strong>游戏规则：</strong></p>
+                        <ul>
+                            <li>红方先行</li>
+                            <li>各棋子按规则移动</li>
+                            <li>吃掉对方将（帅）获胜</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🃏</div>
+                    <h3>斗地主</h3>
+                    <p>斗地主游戏，支持叫地主、出牌等完整流程，界面美观，接近QQ斗地主风格</p>
+                    <div class="game-info">
+                        <h4>🎯 游戏说明</h4>
+                        <p><strong>运行方法：</strong></p>
+                        <ul>
+                            <li>打开命令行</li>
+                            <li>输入：<code>cd e:\project33</code></li>
+                            <li>输入：<code>python landlord.py</code></li>
+                        </ul>
+                        <p><strong>游戏规则：</strong></p>
+                        <ul>
+                            <li>三人游戏，地主vs农民</li>
+                            <li>支持所有斗地主牌型</li>
+                            <li>先出完牌者获胜</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <p>🐍 Python学习平台 - 学习编程，享受游戏！</p>
+            </footer>
+        </div>
+
+        <!-- Python语法知识 -->
+        <div id="python-syntax" class="tab-content">
+            <div class="content-section">
+                <h2>🐍 Python语法知识</h2>
+                <a href="#" class="back-btn" onclick="showTab('home'); return false;">← 返回主页</a>
+                
+                <h3>📚 变量与数据类型</h3>
+                <p>Python中的变量不需要声明类型，可以直接赋值：</p>
+                <pre style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin: 20px 0;">
+# 变量赋值
+name = "Alice"
+age = 25
+height = 1.65
+is_student = True
+
+# 打印变量
+print(name)      # 输出: Alice
+print(age)       # 输出: 25
+print(height)    # 输出: 1.65
+print(is_student) # 输出: True
+                </pre>
+
+                <h3>🔄 控制流程</h3>
+                <p>Python支持if-else条件语句和for/while循环：</p>
+                <pre style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin: 20px 0;">
+# if-else语句
+if age >= 18:
+    print("成年人")
+else:
+    print("未成年人")
+
+# for循环
+for i in range(5):
+    print(i)  # 输出: 0, 1, 2, 3, 4
+
+# while循环
+count = 0
+while count < 5:
+    print(count)
+    count += 1
+                </pre>
+
+                <h3>📝 函数</h3>
+                <p>使用def关键字定义函数：</p>
+                <pre style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin: 20px 0;">
+def greet(name):
+    """打招呼函数"""
+    return f"Hello, {name}!"
+
+# 调用函数
+result = greet("Bob")
+print(result)  # 输出: Hello, Bob!
+                </pre>
+
+                <h3>📋 列表与元组</h3>
+                <p>列表是可变的，元组是不可变的：</p>
+                <pre style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin: 20px 0;">
+# 列表
+fruits = ["apple", "banana", "cherry"]
+fruits.append("orange")  # 添加元素
+print(fruits)  # 输出: ['apple', 'banana', 'cherry', 'orange']
+
+# 元组
+colors = ("red", "green", "blue")
+print(colors[0])  # 输出: red
+                </pre>
+
+                <h3>📖 字典</h3>
+                <p>字典使用键值对存储数据：</p>
+                <pre style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin: 20px 0;">
+# 字典
+person = {
+    "name": "Alice",
+    "age": 25,
+    "city": "New York"
+}
+
+print(person["name"])  # 输出: Alice
+person["age"] = 26    # 修改值
+                </pre>
+
+                <h3>🏛️ 类与对象</h3>
+                <p>Python是面向对象的编程语言：</p>
+                <pre style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin: 20px 0;">
+class Student:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def study(self, subject):
+        return f"{self.name} is studying {subject}"
+
+# 创建对象
+student = Student("Bob", 18)
+print(student.study("Math"))  # 输出: Bob is studying Math
+                </pre>
+            </div>
+        </div>
+
+        <!-- AI费曼学习助手 -->
+        <div id="ai-feynman" class="tab-content">
+            <div class="content-section">
+                <h2>🎓 AI费曼学习助手</h2>
+                <a href="#" class="back-btn" onclick="showTab('home'); return false;">← 返回主页</a>
+                
+                <h3>📚 什么是费曼学习法？</h3>
+                <p>费曼学习法是著名物理学家理查德·费曼提出的高效学习方法，通过四个简单步骤帮助你真正理解知识：</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0;">
+                    <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h4>1️⃣ 选择主题</h4>
+                        <p>选择你想学习的概念或主题</p>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h4>2️⃣ 教授给他人</h4>
+                        <p>尝试用简单的语言解释这个概念</p>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h4>3️⃣ 找出漏洞</h4>
+                        <p>发现自己解释不清楚的地方</p>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h4>4️⃣ 简化知识</h4>
+                        <p>回顾和简化你的解释</p>
+                    </div>
+                </div>
+
+                <h3>✨ 核心功能</h3>
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin: 30px 0;">
+                    <h4>💡 简化解释</h4>
+                    <p>用简单易懂的语言解释复杂概念，就像在教一个小孩子一样。</p>
+                    
+                    <h4 style="margin-top: 20px;">❓ 测试问题</h4>
+                    <p>生成5个问题来测试你对概念的理解程度，帮助你发现知识漏洞。</p>
+                    
+                    <h4 style="margin-top: 20px;">🎯 学习建议</h4>
+                    <p>根据你的解释给出个性化的学习建议，帮助你更有效地学习。</p>
+                </div>
+
+                <h3>🔧 如何使用</h3>
+                <ol style="margin-left: 30px; margin-bottom: 30px;">
+                    <li>在输入框中输入你想学习的主题</li>
+                    <li>（可选）用你自己的话解释这个概念</li>
+                    <li>点击按钮获取简化解释或测试问题</li>
+                    <li>根据反馈继续学习和改进</li>
+                </ol>
+
+                <div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 30px; border-radius: 15px; text-align: center;">
+                    <h3>🎓 开始你的学习之旅吧！</h3>
+                    <p>记住：如果你不能用简单的语言解释它，说明你还没有真正理解它！</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // 隐藏所有标签页
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 显示选中的标签页
+            const selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+        }
+
+        // 页面加载完成后的操作
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Python学习平台加载完成！');
+        });
+    </script>
+</body>
+</html>
