@@ -1,200 +1,457 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="h-full">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>知识费曼化 + 记忆宫殿可视化</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = { darkMode: 'class' }
-  </script>
+  <title>寒假学习进程记录</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --danger: #dc2626;
+      --border: #d1d5db;
+      --done: #111827;
+      --todo: #9ca3af;
+      --success: #059669;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      background: linear-gradient(180deg, #eef2ff, var(--bg));
+      color: var(--text);
+      padding: 24px 12px;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+      padding: 16px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input[type="date"],
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 14px;
+      background: #fff;
+      transition: border-color 0.2s ease;
+    }
+
+    input[type="date"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    button {
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.08s ease;
+    }
+
+    button:hover { background: var(--primary-dark); }
+    button:active { transform: translateY(1px); }
+
+    .btn-secondary { background: #4b5563; }
+    .btn-secondary:hover { background: #374151; }
+
+    .btn-danger { background: var(--danger); }
+    .btn-danger:hover { background: #b91c1c; }
+
+    .event-row {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #fcfdff;
+    }
+
+    .event-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .inline-remove {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid #fecaca;
+      padding: 4px 10px;
+    }
+
+    .inline-remove:hover { background: #fee2e2; }
+
+    .hint {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .error {
+      color: var(--danger);
+      margin-top: 8px;
+      font-size: 13px;
+      min-height: 18px;
+    }
+
+    .status {
+      font-size: 13px;
+      color: var(--success);
+      min-height: 18px;
+      margin-top: 8px;
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 14px;
+      padding-left: 18px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #e5e7eb;
+    }
+
+    .timeline-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 12px;
+      padding: 10px 0;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -16px;
+      top: 16px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px #d1d5db;
+    }
+
+    .timeline-date { font-weight: 700; }
+
+    .done { color: var(--done); }
+    .todo { color: var(--todo); }
+
+    .empty {
+      color: var(--muted);
+      background: #f9fafb;
+      border: 1px dashed #d1d5db;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 640px) {
+      .timeline-item { grid-template-columns: 1fr; }
+      .timeline-date { font-size: 13px; }
+    }
+  </style>
 </head>
-<body class="h-full bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors">
-  <div class="max-w-7xl mx-auto px-4 py-6 md:py-10">
-    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-      <div>
-        <h1 class="text-2xl md:text-4xl font-bold">知识费曼化 + 记忆宫殿可视化</h1>
-        <p class="text-sm md:text-base text-slate-600 dark:text-slate-300">输入任意知识，一键生成小白讲解与可交互记忆场景。</p>
-      </div>
-      <button id="themeBtn" class="px-4 py-2 rounded-xl bg-slate-800 text-white dark:bg-yellow-400 dark:text-slate-900">切换明暗模式</button>
-    </header>
-
-    <section class="grid lg:grid-cols-2 gap-5">
-      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow p-5">
-        <h2 class="font-semibold text-xl mb-3">1) 知识输入区</h2>
-        <input id="titleInput" class="w-full mb-3 px-3 py-2 rounded-lg border dark:bg-slate-900" placeholder="主题标题（可选）" />
-        <textarea id="contentInput" rows="10" class="w-full px-3 py-2 rounded-lg border dark:bg-slate-900" placeholder="请输入任意领域知识，如HTTP、牛顿三大定律、玄武门之变等"></textarea>
-        <div class="flex justify-between mt-2 text-sm text-slate-500">
-          <span id="charCount">0 字</span>
-          <div class="space-x-2">
-            <button id="clearBtn" class="px-3 py-1 rounded bg-slate-200 dark:bg-slate-700">清空</button>
-            <button id="submitBtn" class="px-3 py-1 rounded bg-indigo-600 text-white">提交生成</button>
-          </div>
-        </div>
-        <div id="loading" class="hidden mt-3 text-indigo-600">⏳ 正在生成内容，请稍候...</div>
-      </div>
-
-      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow p-5">
-        <h2 class="font-semibold text-xl mb-3">历史记录（本地存储）</h2>
-        <ul id="historyList" class="space-y-2 max-h-72 overflow-auto"></ul>
-      </div>
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>寒假学习进程记录</h1>
+      <p class="subtitle">设置寒假时间范围，录入每日学习内容，一键生成纵向时间轴。</p>
     </section>
 
-    <section id="resultSection" class="hidden mt-6 grid xl:grid-cols-2 gap-5">
-      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow p-5">
-        <h2 class="font-semibold text-xl mb-4">2) 费曼化讲解区</h2>
-        <div class="grid gap-3">
-          <article class="p-3 rounded-xl bg-sky-50 dark:bg-slate-900">
-            <h3 class="font-semibold text-sky-700 dark:text-sky-300">通俗定义</h3>
-            <p id="plainDef"></p>
-          </article>
-          <article class="p-3 rounded-xl bg-emerald-50 dark:bg-slate-900">
-            <h3 class="font-semibold text-emerald-700 dark:text-emerald-300">生活类比</h3>
-            <p id="analogy"></p>
-          </article>
-          <article class="p-3 rounded-xl bg-amber-50 dark:bg-slate-900">
-            <h3 class="font-semibold text-amber-700 dark:text-amber-300">实战例子</h3>
-            <p id="example" class="whitespace-pre-line"></p>
-          </article>
-          <article class="p-3 rounded-xl bg-rose-50 dark:bg-slate-900">
-            <h3 class="font-semibold text-rose-700 dark:text-rose-300">易错点提醒</h3>
-            <ul id="pitfalls" class="list-disc ml-5"></ul>
-          </article>
+    <section class="card">
+      <h2>一、基础设置区</h2>
+      <div class="grid-2">
+        <div>
+          <label for="vacationStart">寒假开始日期</label>
+          <input id="vacationStart" type="date" />
+        </div>
+        <div>
+          <label for="vacationEnd">寒假结束日期</label>
+          <input id="vacationEnd" type="date" />
         </div>
       </div>
-
-      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow p-5">
-        <h2 class="font-semibold text-xl mb-2">3) 记忆宫殿可视化区</h2>
-        <p id="palaceTheme" class="text-sm text-slate-500 mb-3"></p>
-        <div class="flex items-center justify-between mb-3">
-          <button id="prevScene" class="px-3 py-1 rounded bg-slate-200 dark:bg-slate-700">← 上一场景</button>
-          <span id="sceneIndex" class="text-sm"></span>
-          <button id="nextScene" class="px-3 py-1 rounded bg-slate-200 dark:bg-slate-700">下一场景 →</button>
-        </div>
-        <div id="sceneCard" class="rounded-2xl p-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white min-h-48 cursor-pointer">
-          <h3 id="sceneRoom" class="font-bold text-xl"></h3>
-          <p id="sceneDesc" class="mt-2"></p>
-          <div class="mt-3 p-3 rounded-xl bg-white/20">
-            <div class="font-semibold">绑定要点</div>
-            <p id="scenePoint"></p>
-          </div>
-          <div id="tooltip" class="mt-3 hidden p-2 rounded bg-black/40 text-sm"></div>
-        </div>
-      </div>
+      <p id="dateError" class="error"></p>
     </section>
-  </div>
 
-<script>
-const API_BASE = 'http://127.0.0.1:8000/api';
-let palaceScenes = [];
-let currentScene = 0;
+    <section class="card">
+      <h2>二、事件添加区</h2>
+      <div id="eventList"></div>
+      <div class="actions">
+        <button id="addRowBtn" type="button">添加一行</button>
+        <button id="clearEventsBtn" type="button" class="btn-danger">清空事件</button>
+      </div>
+      <p class="hint">提示：每行都可以填写“学习时间 + 学习事件”，并支持删除单行。</p>
+      <p id="eventStatus" class="status"></p>
+    </section>
 
-const contentInput = document.getElementById('contentInput');
-const charCount = document.getElementById('charCount');
-const historyList = document.getElementById('historyList');
-const loading = document.getElementById('loading');
+    <section class="card">
+      <h2>三、时间轴展示区</h2>
+      <div class="actions">
+        <button id="generateBtn" type="button">生成时间轴</button>
+        <button id="resetTimelineBtn" type="button" class="btn-secondary">重置时间轴</button>
+      </div>
+      <p id="timelineError" class="error"></p>
+      <div id="timelineContainer"></div>
+    </section>
+  </main>
 
-function updateCount() { charCount.textContent = `${contentInput.value.length} 字`; }
-contentInput.addEventListener('input', updateCount);
+  <script>
+    // ===== 工具函数：统一处理日期字符串到“当天零点时间戳” =====
+    // 这样做能避免时分秒差异导致的比较误差。
+    function dateToMidnight(dateStr) {
+      const date = new Date(dateStr + 'T00:00:00');
+      return date.getTime();
+    }
 
-function saveHistory(record) {
-  const history = JSON.parse(localStorage.getItem('km_history') || '[]');
-  history.unshift(record);
-  localStorage.setItem('km_history', JSON.stringify(history.slice(0, 8)));
-  renderHistory();
-}
+    const eventList = document.getElementById('eventList');
+    const eventStatus = document.getElementById('eventStatus');
+    const dateError = document.getElementById('dateError');
+    const timelineError = document.getElementById('timelineError');
+    const timelineContainer = document.getElementById('timelineContainer');
 
-function renderHistory() {
-  const history = JSON.parse(localStorage.getItem('km_history') || '[]');
-  historyList.innerHTML = history.map(h => `<li class="p-2 rounded bg-slate-100 dark:bg-slate-900"><b>${h.title}</b><div class="text-xs text-slate-500">${h.time}</div></li>`).join('') || '<li class="text-slate-500">暂无历史记录</li>';
-}
+    // 用于给每个事件行分配唯一编号，方便删除。
+    let rowIdSeed = 0;
 
-function renderScene() {
-  if (!palaceScenes.length) return;
-  const scene = palaceScenes[currentScene];
-  document.getElementById('sceneRoom').textContent = scene.room;
-  document.getElementById('sceneDesc').textContent = scene.scene_description;
-  document.getElementById('scenePoint').textContent = scene.point;
-  document.getElementById('tooltip').textContent = `记忆提示：${scene.memory_hint}`;
-  document.getElementById('sceneIndex').textContent = `${currentScene + 1} / ${palaceScenes.length}`;
-}
+    // ===== 校验寒假开始/结束日期是否合法 =====
+    function validateVacationRange() {
+      const start = document.getElementById('vacationStart').value;
+      const end = document.getElementById('vacationEnd').value;
 
-async function handleSubmit() {
-  const content = contentInput.value.trim();
-  const title = document.getElementById('titleInput').value.trim() || '未命名主题';
-  if (content.length < 30) return alert('请至少输入30个字符，便于提取核心知识。');
+      dateError.textContent = '';
+      if (!start || !end) {
+        return true; // 未填完整时先不报错，交给“生成时间轴”时统一校验。
+      }
 
-  loading.classList.remove('hidden');
-  try {
-    const submitRes = await fetch(`${API_BASE}/knowledge/submit`, {
-      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ title, content })
+      if (dateToMidnight(end) < dateToMidnight(start)) {
+        dateError.textContent = '结束时间不能早于开始时间，请重新选择。';
+        return false;
+      }
+      return true;
+    }
+
+    // ===== 创建单条事件输入行 =====
+    function createEventRow(defaultDate = '', defaultText = '') {
+      rowIdSeed += 1;
+      const row = document.createElement('div');
+      row.className = 'event-row';
+      row.dataset.rowId = String(rowIdSeed);
+      row.innerHTML = `
+        <div class="event-head">
+          <strong>学习事件 #${rowIdSeed}</strong>
+          <button type="button" class="inline-remove" data-remove-id="${rowIdSeed}">删除</button>
+        </div>
+        <div class="grid-2">
+          <div>
+            <label>学习时间</label>
+            <input type="date" class="event-date" value="${defaultDate}" />
+          </div>
+          <div>
+            <label>学习事件</label>
+            <textarea class="event-text" placeholder="例如：完成数学函数专题复习 + 错题整理">${defaultText}</textarea>
+          </div>
+        </div>
+      `;
+
+      eventList.appendChild(row);
+    }
+
+    // ===== 收集并清洗所有输入事件 =====
+    function collectEvents() {
+      const rows = Array.from(document.querySelectorAll('.event-row'));
+      const events = [];
+
+      rows.forEach((row) => {
+        const date = row.querySelector('.event-date').value;
+        const text = row.querySelector('.event-text').value.trim();
+        // 仅保留日期和内容都填写完整的事件，避免脏数据进入时间轴。
+        if (date && text) {
+          events.push({ date, text });
+        }
+      });
+
+      return events;
+    }
+
+    // ===== 渲染时间轴 =====
+    function renderTimeline(events) {
+      timelineContainer.innerHTML = '';
+
+      if (!events.length) {
+        timelineContainer.innerHTML = '<div class="empty">当前没有可展示的事件，请先添加并填写完整事件。</div>';
+        return;
+      }
+
+      const timeline = document.createElement('div');
+      timeline.className = 'timeline';
+
+      const today = new Date();
+      const todayStamp = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+
+      events.forEach((event) => {
+        const item = document.createElement('article');
+        const isDone = dateToMidnight(event.date) <= todayStamp;
+        item.className = `timeline-item ${isDone ? 'done' : 'todo'}`;
+        item.innerHTML = `
+          <div class="timeline-date">${event.date}</div>
+          <div>${event.text}</div>
+        `;
+        timeline.appendChild(item);
+      });
+
+      timelineContainer.appendChild(timeline);
+    }
+
+    // ===== “添加一行”按钮 =====
+    document.getElementById('addRowBtn').addEventListener('click', () => {
+      createEventRow();
+      eventStatus.textContent = '已添加新的事件输入行。';
+      setTimeout(() => { eventStatus.textContent = ''; }, 1200);
     });
-    const submitData = await submitRes.json();
-    if (!submitRes.ok) throw new Error(submitData.detail || '提交失败');
 
-    const [feynmanRes, palaceRes] = await Promise.all([
-      fetch(`${API_BASE}/feynman/${submitData.submission_id}`),
-      fetch(`${API_BASE}/palace/${submitData.submission_id}`)
-    ]);
-    const f = await feynmanRes.json();
-    const p = await palaceRes.json();
+    // ===== 事件委托：处理删除单条事件 =====
+    eventList.addEventListener('click', (e) => {
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) return;
 
-    document.getElementById('plainDef').textContent = f.plain_definition;
-    document.getElementById('analogy').textContent = f.life_analogy;
-    document.getElementById('example').textContent = f.practical_example;
-    document.getElementById('pitfalls').innerHTML = f.pitfalls.map(x => `<li>${x}</li>`).join('');
+      const removeId = target.getAttribute('data-remove-id');
+      if (!removeId) return;
 
-    document.getElementById('palaceTheme').textContent = p.palace_theme;
-    palaceScenes = p.scenes;
-    currentScene = 0;
-    renderScene();
+      const row = document.querySelector(`.event-row[data-row-id="${removeId}"]`);
+      if (row) {
+        row.remove();
+        eventStatus.textContent = `已删除学习事件 #${removeId}。`;
+        setTimeout(() => { eventStatus.textContent = ''; }, 1200);
+      }
 
-    document.getElementById('resultSection').classList.remove('hidden');
-    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+      // 保底：至少保留 1 行输入框，提高可用性。
+      if (!document.querySelector('.event-row')) {
+        createEventRow();
+      }
+    });
 
-    saveHistory({ title, time: new Date().toLocaleString() });
-  } catch (e) {
-    alert(`生成失败：${e.message}`);
-  } finally {
-    loading.classList.add('hidden');
-  }
-}
+    // ===== 清空所有事件 =====
+    document.getElementById('clearEventsBtn').addEventListener('click', () => {
+      eventList.innerHTML = '';
+      createEventRow();
+      eventStatus.textContent = '事件输入已清空。';
+      setTimeout(() => { eventStatus.textContent = ''; }, 1200);
+    });
 
-const tooltip = document.getElementById('tooltip');
-document.getElementById('sceneCard').addEventListener('mouseenter', () => tooltip.classList.remove('hidden'));
-document.getElementById('sceneCard').addEventListener('mouseleave', () => tooltip.classList.add('hidden'));
-document.getElementById('sceneCard').addEventListener('click', () => {
-  currentScene = (currentScene + 1) % palaceScenes.length;
-  renderScene();
-});
+    // ===== 生成时间轴 =====
+    document.getElementById('generateBtn').addEventListener('click', () => {
+      timelineError.textContent = '';
 
-document.getElementById('prevScene').addEventListener('click', () => {
-  if (!palaceScenes.length) return;
-  currentScene = (currentScene - 1 + palaceScenes.length) % palaceScenes.length;
-  renderScene();
-});
-document.getElementById('nextScene').addEventListener('click', () => {
-  if (!palaceScenes.length) return;
-  currentScene = (currentScene + 1) % palaceScenes.length;
-  renderScene();
-});
+      const start = document.getElementById('vacationStart').value;
+      const end = document.getElementById('vacationEnd').value;
 
-let startX = 0;
-document.getElementById('sceneCard').addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
-document.getElementById('sceneCard').addEventListener('touchend', (e) => {
-  if (!palaceScenes.length) return;
-  const delta = e.changedTouches[0].clientX - startX;
-  if (Math.abs(delta) < 30) return;
-  currentScene = delta > 0 ? (currentScene - 1 + palaceScenes.length) % palaceScenes.length : (currentScene + 1) % palaceScenes.length;
-  renderScene();
-});
+      if (!start || !end) {
+        timelineError.textContent = '请先填写寒假开始与结束日期。';
+        return;
+      }
 
-document.getElementById('clearBtn').addEventListener('click', () => { contentInput.value = ''; document.getElementById('titleInput').value = ''; updateCount(); });
-document.getElementById('submitBtn').addEventListener('click', handleSubmit);
-document.getElementById('themeBtn').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+      if (!validateVacationRange()) {
+        timelineError.textContent = '日期范围校验未通过，请修正后再生成。';
+        return;
+      }
 
-renderHistory();
-updateCount();
-</script>
+      const startStamp = dateToMidnight(start);
+      const endStamp = dateToMidnight(end);
+
+      // 1) 收集完整事件；2) 筛选寒假范围内事件；3) 按日期升序排列。
+      const filteredSortedEvents = collectEvents()
+        .filter((event) => {
+          const eventStamp = dateToMidnight(event.date);
+          return eventStamp >= startStamp && eventStamp <= endStamp;
+        })
+        .sort((a, b) => dateToMidnight(a.date) - dateToMidnight(b.date));
+
+      renderTimeline(filteredSortedEvents);
+    });
+
+    // ===== 重置时间轴 =====
+    document.getElementById('resetTimelineBtn').addEventListener('click', () => {
+      timelineContainer.innerHTML = '';
+      timelineError.textContent = '';
+      eventStatus.textContent = '时间轴已重置。';
+      setTimeout(() => { eventStatus.textContent = ''; }, 1200);
+    });
+
+    // ===== 监听基础日期输入，实时做范围校验 =====
+    document.getElementById('vacationStart').addEventListener('change', validateVacationRange);
+    document.getElementById('vacationEnd').addEventListener('change', validateVacationRange);
+
+    // 初始化：默认创建一条可填写的事件行。
+    createEventRow();
+  </script>
 </body>
 </html>
